@@ -23,11 +23,5 @@ class PokedexRouter: PokedexRouterProtocol {
         view.presenter = presenter
         
         return view
-        
-        
     }
-    
-    
-    
-    
 }
