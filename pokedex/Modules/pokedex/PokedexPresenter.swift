@@ -31,10 +31,10 @@ extension PokedexPresenter: PokedexOutputInteractorProtocol {
         var spritesData = [String]()
         
         if let spriteSafeUnwrap = data.sprites {
-            spritesData.append(spriteSafeUnwrap.frontDefault ?? "")
+            spritesData.append(spriteSafeUnwrap.frontDefault)
             spritesData.append(spriteSafeUnwrap.backDefault ?? "")
             spritesData.append(spriteSafeUnwrap.backShiny ?? "")
-            spritesData.append(spriteSafeUnwrap.frontShiny ?? "")
+            spritesData.append(spriteSafeUnwrap.frontShiny)
             spritesData.append(spriteSafeUnwrap.animated?.frontDefault ?? "")
             spritesData.append(spriteSafeUnwrap.backFemale ?? "")
             spritesData.append(spriteSafeUnwrap.backShiny ?? "")

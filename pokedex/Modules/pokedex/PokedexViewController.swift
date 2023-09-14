@@ -34,7 +34,6 @@ class PokedexViewController: UIViewController {
     let downSearchButton = UIButton()
     let upSearchButton = UIButton()
     let nextButton = UIButton()
-    let randomButton = UIButton()
     
     let tableView = UITableView()
 
@@ -87,7 +86,6 @@ class PokedexViewController: UIViewController {
         heightLabel.text = "Label"
         heightLabel.font = UIFont.systemFont(ofSize: 18)
         contentView.addSubview(heightLabel)
-        
 
         previousButton.setTitle("←", for: .normal)
         previousButton.titleLabel?.font = UIFont.systemFont(ofSize: 24)
@@ -121,14 +119,6 @@ class PokedexViewController: UIViewController {
         nextButton.addTarget(self, action: #selector(nextButtonTapped), for: .touchUpInside)
         contentView.addSubview(nextButton)
         
-        randomButton.setTitle("R", for: .normal)
-        randomButton.titleLabel?.font = UIFont.systemFont(ofSize: 24)
-        randomButton.setTitleColor(.black, for: .normal)
-        randomButton.backgroundColor = .yellow
-        randomButton.layer.cornerRadius = 8.0
-        randomButton.addTarget(self, action: #selector(randomButtonTapped), for: .touchUpInside)
-        contentView.addSubview(randomButton)
-        
         tableView.dataSource = self
         tableView.delegate = self
         tableView.register(UITableViewCell.self, forCellReuseIdentifier: "Cell")
@@ -138,7 +128,6 @@ class PokedexViewController: UIViewController {
     }
 
     func setupConstraints() {
-        randomButton.translatesAutoresizingMaskIntoConstraints = false
         backgroundView.translatesAutoresizingMaskIntoConstraints = false
         contentView.translatesAutoresizingMaskIntoConstraints = false
         pokemonImageView.translatesAutoresizingMaskIntoConstraints = false
@@ -227,13 +216,6 @@ class PokedexViewController: UIViewController {
         ])
         
         NSLayoutConstraint.activate([
-            randomButton.bottomAnchor.constraint(equalTo: tableView.bottomAnchor, constant: 60),
-            randomButton.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -20),
-            randomButton.widthAnchor.constraint(equalToConstant: 50),
-            randomButton.heightAnchor.constraint(equalToConstant: 50)
-        ])
-        
-        NSLayoutConstraint.activate([
             tableView.topAnchor.constraint(equalTo: heightLabel.bottomAnchor, constant: 20),
             tableView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
             tableView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor),
@@ -252,11 +234,6 @@ class PokedexViewController: UIViewController {
             spriteSearch = 0
         }
     }
-    
-    @objc func randomButtonTapped() {
-        pokemonSearch = Int(randomNumber())
-        showPokemon()
-    }
 
     @objc func upButtonTapped() {
         if spriteSearch == (spriteData?.count ?? 0) - 1 {
@@ -265,7 +242,7 @@ class PokedexViewController: UIViewController {
             print(spriteData?.count)
             spriteSearch += 1
             print(spriteSearch)
-            pokemonImageView.loadImage(from: spriteData?[spriteSearch] ?? "")
+            pokemonImageView.loadImage(from: spriteData![spriteSearch])
         }
     }
 
@@ -301,11 +278,6 @@ class PokedexViewController: UIViewController {
         return kg
     }
     
-    func randomNumber() -> UInt32 {
-        let randomNumber = arc4random_uniform(1014) + 1
-        return randomNumber
-    }
-    
 }
 
 extension PokedexViewController: UITableViewDelegate, UITableViewDataSource{
@@ -315,11 +287,10 @@ extension PokedexViewController: UITableViewDelegate, UITableViewDataSource{
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let emptyCell = UITableViewCell(style: .value1, reuseIdentifier: "Cell")
         let cell = tableView.dequeueReusableCell(withIdentifier: "Cell")
         cell?.textLabel?.text = pokemonData?.abilities[indexPath.row].ability.name
         
-        return cell ?? emptyCell
+        return cell!
         
     }
     
@@ -342,16 +313,14 @@ extension PokedexViewController: PokedexViewProtocol {
             self.nameLabel.text = dataPokemon.name
             self.typeLabel.text = dataPokemon.types.first?.type.name
             self.weightLabel.text = "Peso: \(self.hectogramsToKg(hectograms: dataPokemon.weight)) kg"
-            self.heightLabel.text = "Altura: \(self.decimetersToMeters(decimeters: dataPokemon.height ?? 0)) m"
+            self.heightLabel.text = "Altura: \(self.decimetersToMeters(decimeters: dataPokemon.height)) m"
             self.tableView.reloadData()
         }
     }
     
     
     func getPokemonsRequestFailure() {
-        DispatchQueue.main.async {
-            self.dismiss(animated: false, completion: nil)
-        }
+        dismiss(animated: false, completion: nil)
         print("error backend")
     }
     
